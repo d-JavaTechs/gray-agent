@@ -7,8 +7,10 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import pn.eric.operations.event.OperateCommand;
 import pn.eric.operations.po.DeployServerObject;
 import pn.eric.operations.po.WebObject;
+import pn.eric.operations.util.JavaShellUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,11 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Eric
  */
 public class Boot {
+    final static int port = 9095;
+    final static String hostName = "localhost";
     public static void main(String[] args) throws InterruptedException {
 
         Configuration config = new Configuration();
-        config.setHostname("localhost");
-        config.setPort(9095);
+        config.setHostname(hostName);
+        config.setPort(port);
         Map<String,DeployServerObject> nodesMap = new ConcurrentHashMap<String,DeployServerObject> ();
         final SocketIOServer server = new SocketIOServer(config);
         server.addConnectListener(new ConnectListener() {
@@ -45,61 +49,78 @@ public class Boot {
             }
         });
 
-               server.addEventListener("nodeReg",String.class,new DataListener<String>(){
-                            @Override
-                            public void onData (SocketIOClient client,
-                                                String data, AckRequest ackRequest){
-                                client.joinRoom("nodes");
-                                System.out.println("nodes Reg");
-                                String name = data.split(":")[0];
-                                String ip = data.split(":")[1];
-                                nodesMap.put(client.getSessionId().toString(), new DeployServerObject(name,ip) );
-                                notifyWebClients(nodesMap, server);
-                        }
-                }
-
-               );
-
-                server.addEventListener("webReg",WebObject.class,new DataListener<WebObject>() {
+       server.addEventListener("nodeReg",String.class,new DataListener<String>(){
                     @Override
                     public void onData (SocketIOClient client,
-                        WebObject data, AckRequest ackRequest){
-
-                        client.joinRoom("web");
-                        System.out.println("webReg");
-
+                                        String data, AckRequest ackRequest){
+                        client.joinRoom("nodes");
+                        System.out.println("nodes Reg");
+                        String name = data.split(":")[0];
+                        String ip = data.split(":")[1];
+                        nodesMap.put(client.getSessionId().toString(), new DeployServerObject(name,ip) );
                         notifyWebClients(nodesMap, server);
-                    }
                 }
+        }
 
-                );
+       );
 
+        server.addEventListener("webReg",WebObject.class,new DataListener<WebObject>() {
+            @Override
+            public void onData (SocketIOClient client,
+                WebObject data, AckRequest ackRequest){
 
-                server.addEventListener("webEvent",WebObject.class,new DataListener<WebObject>() {
-                    @Override
-                    public void onData (SocketIOClient client,
-                        WebObject data, AckRequest ackRequest){
-                    String command = data.getMsg();
-                    String result = handleEvent(command);
-                    System.out.println("webEvent: " + command);
+                client.joinRoom("web");
+                System.out.println("webReg");
 
-                    if (result.equals("route")) {
-                        if (server.getRoomOperations("nodes").getClients()
-                                .size() > 0) {
-                            System.out.println("broadcast messages to room operas");
-                            server.getRoomOperations("nodes").sendEvent("webCmd", data);
-                        }
-                    }
-                    ackRequest.sendAckData(true);
-                }
-
-
+                notifyWebClients(nodesMap, server);
             }
+        }
 
-            );
+        );
+
+
+        server.addEventListener("webEvent",WebObject.class,new DataListener<WebObject>() {
+            @Override
+            public void onData (SocketIOClient client,
+                WebObject data, AckRequest ackRequest){
+            String command = data.getMsg();
+            System.out.println("webEvent: " + command);
+
+            switch (command) {
+                case "listBuildServerBranches":
+                    System.out.println("handleEvent->listBuildServerBranches");
+                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BRANCH, client);
+                    break;
+                case "build":
+                    System.out.println("handleEvent->build");
+                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BUILD, client);
+                    break;
+                case "rollBack":
+                    System.out.println("handleEvent->rollBack");
+                    if (server.getRoomOperations("nodes").getClients()
+                            .size() > 0) {
+                        System.out.println("broadcast messages to room operas");
+                        server.getRoomOperations("nodes").sendEvent("webCmd", data);
+                    }
+                    break;
+                case "deploy":
+                    System.out.println("handleEvent->deploy");
+                    if (server.getRoomOperations("nodes").getClients()
+                            .size() > 0) {
+                        System.out.println("broadcast messages to room operas");
+                        server.getRoomOperations("nodes").sendEvent("webCmd", data);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            ackRequest.sendAckData(true);
+        }
+        }
+      );
 
             server.start();
-            System.out.println("websocket server started at 9095");
+            System.out.println("websocket server started at "+port);
             Thread.sleep(Integer.MAX_VALUE);
 
             server.stop();
@@ -118,28 +139,5 @@ public class Boot {
         if (ar.size()>= 0&& server.getRoomOperations("web").getClients().size() > 0) {
             server.getRoomOperations("web").sendEvent("serverList", ar);
         }
-    }
-
-    private static String handleEvent(String messageFromWeb) {
-            String result="";
-            switch (messageFromWeb) {
-                case "listBuildServerBranches":
-                    System.out.println("handleEvent->listBuildServerBranches");
-                     break;
-                case "build":
-                    System.out.println("handleEvent->build");
-                    break;
-                case "rollBack":
-                    result= "route";
-                    System.out.println("handleEvent->rollBack");
-                    break;
-                case "deploy":
-                    result= "route";
-                    System.out.println("handleEvent->deploy");
-                    break;
-                default:
-                    break;
-        }
-         return result;
     }
 }

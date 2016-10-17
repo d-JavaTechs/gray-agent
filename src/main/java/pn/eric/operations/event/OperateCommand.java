@@ -6,8 +6,7 @@ package pn.eric.operations.event;
  */
 public enum OperateCommand {
     BRANCH,
-    NODEON,
-    NODEOFF,
-    SERVICES,
-    SERVICEOP;
+    BUILD,
+    ROLLBACK,
+    DEPLOY
 }
