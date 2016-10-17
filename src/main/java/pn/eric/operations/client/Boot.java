@@ -18,7 +18,7 @@ public class Boot {
                 socket.emit("operas", "hi , I am duwupeng");
             }
 
-        }).on("operas", new DeployServerOperations()).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+        }).on("webCmd", new DeployServerOperations()).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             public void call(Object... args) {
                 System.out.println("disconnected");
             }
