@@ -4,11 +4,11 @@ package pn.eric.operations.po;
  * @author Shadow
  * @date
  */
-public class ServerObject {
+public class DeployServerObject {
     String name;
     String ip;
 
-    public ServerObject(String name, String ip) {
+    public DeployServerObject(String name, String ip) {
         this.name = name;
         this.ip = ip;
     }
