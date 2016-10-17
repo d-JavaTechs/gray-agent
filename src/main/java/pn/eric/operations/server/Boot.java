@@ -42,25 +42,25 @@ public class Boot {
 
                     System.out.println(String.format("leave room  nodes %s", socketIOClient.getSessionId()));
                     notifyWebClients(nodesMap, server);
-                }else{
+                } else {
                     socketIOClient.leaveRoom("web");
                     System.out.println(String.format("leave room web  %s", socketIOClient.getSessionId()));
                 }
             }
         });
 
-       server.addEventListener("nodeReg",String.class,new DataListener<String>(){
-                    @Override
-                    public void onData (SocketIOClient client,
-                                        String data, AckRequest ackRequest){
-                        client.joinRoom("nodes");
-                        System.out.println("nodes Reg");
-                        String name = data.split(":")[0];
-                        String ip = data.split(":")[1];
-                        nodesMap.put(client.getSessionId().toString(), new DeployServerObject(name,ip) );
-                        notifyWebClients(nodesMap, server);
-                }
-        }
+       server.addEventListener("nodeReg", String.class, new DataListener<String>() {
+                   @Override
+                   public void onData(SocketIOClient client,
+                                      String data, AckRequest ackRequest) {
+                       client.joinRoom("nodes");
+                       System.out.println("nodes Reg");
+                       String name = data.split(":")[0];
+                       String ip = data.split(":")[1];
+                       nodesMap.put(client.getSessionId().toString(), new DeployServerObject(name, ip));
+                       notifyWebClients(nodesMap, server);
+                   }
+               }
 
        );
 
@@ -77,6 +77,15 @@ public class Boot {
         }
 
         );
+
+        server.addEventListener("nodeEvent",String.class,new DataListener<String>() {
+                    @Override
+                    public void onData (SocketIOClient client,
+                                        String data, AckRequest ackRequest){
+                        notifyWebClientsNodeEvent(nodesMap, server, data);
+                    }
+        });
+
 
 
         server.addEventListener("webEvent",WebObject.class,new DataListener<WebObject>() {
@@ -125,6 +134,12 @@ public class Boot {
 
             server.stop();
         }
+
+    private static void notifyWebClientsNodeEvent(Map<String, DeployServerObject> map, SocketIOServer server,String data) {
+        if (server.getRoomOperations("web").getClients().size() > 0) {
+            server.getRoomOperations("web").sendEvent("serverList", data);
+        }
+    }
 
     private static void notifyWebClients(Map<String, DeployServerObject> map, SocketIOServer server) {
         ArrayList ar = new ArrayList();

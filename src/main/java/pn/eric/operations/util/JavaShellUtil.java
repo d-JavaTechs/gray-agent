@@ -13,8 +13,6 @@ import java.util.Date;
  * @author Eric on 2016-08-10
  */
 public class JavaShellUtil {
-
-
     public static String executeShell(String shellCommand) {
         StringBuffer stringBuffer = new StringBuffer();
         BufferedReader bufferedReader = null;
@@ -44,8 +42,7 @@ public class JavaShellUtil {
         return stringBuffer.toString();
     }
 
-
-    public static String executeShellAndSendMessage(OperateCommand operateCommand,Socket Socket) {
+    public static String executeShellAndSendMessage(OperateCommand operateCommand,Socket socket) {
         String[] shellCommands=null;
         if (operateCommand==OperateCommand.DEPLOY){
             shellCommands=new String[]{"cd ~/scompose","git checkout master & git pull","./scompose up -d"};
@@ -81,10 +78,14 @@ public class JavaShellUtil {
                 stringBuffer.append("执行命令发生异常：\r\n").append(ioe.getMessage()).append("\r\n");
             }
         }
+        if (operateCommand==OperateCommand.DEPLOY){
+            socket.emit("deployEvent",stringBuffer.toString());
 
+        }else if(operateCommand==OperateCommand.ROLLBACK){
+            socket.emit("deployEvent", stringBuffer.toString());
+        }
         return stringBuffer.toString();
     }
-
 
     public static String executeShellAndSendMessage(OperateCommand operateCommand,SocketIOClient client) {
 
@@ -132,7 +133,12 @@ public class JavaShellUtil {
                     stringBuffer.append("执行命令发生异常：\r\n").append(ioe.getMessage()).append("\r\n");
                 }
             }
-        client.sendEvent("branchEvent",stringBuffer.toString());
+        if (operateCommand==OperateCommand.BRANCH){
+            client.sendEvent("branchEvent",stringBuffer.toString());
+
+        }else if(operateCommand==OperateCommand.BUILD){
+            client.sendEvent("buildEvent",stringBuffer.toString());
+        }
 
         return stringBuffer.toString();
     }
