@@ -48,9 +48,9 @@ public class JavaShellUtil {
     public static String executeShellAndSendMessage(OperateCommand operateCommand,Socket Socket) {
         String[] shellCommands=null;
         if (operateCommand==OperateCommand.DEPLOY){
-            shellCommands=new String[]{""};
+            shellCommands=new String[]{"cd ~/scompose","git checkout master & git pull","./scompose up -d"};
         }else if(operateCommand==OperateCommand.ROLLBACK){
-            shellCommands=new String[]{""};
+            shellCommands=new String[]{"./scompose s-rollback F_XHT_1.9.5"};
         }else{
             shellCommands=new String[]{"ls"};
         }
@@ -90,9 +90,16 @@ public class JavaShellUtil {
 
             String[] shellCommands=null;
             if (operateCommand==OperateCommand.BRANCH){
-                shellCommands=new String[]{""};
+                shellCommands=new String[]{"git branch"};
             }else if(operateCommand==OperateCommand.BUILD){
-                shellCommands=new String[]{""};
+                shellCommands=new String[]{"cd ~/scompose",
+                                            " & git pull",
+                                            " & git checkout test",
+                                            "./scompose s-pull",
+                                            " ./scompose s-diff",
+                                            "./scompose s-log",
+                                            "./scompose s-rebuild",
+                                            "./scompose s-docker-push"};
             }else{
                 shellCommands=new String[]{"ls"};
             }
@@ -107,6 +114,7 @@ public class JavaShellUtil {
                     cal.add(Calendar.DATE, -1);
                     String[] cmd = { "/bin/sh", "-c", shellCommand};
                     // 执行Shell命令
+                    stringBuffer.append(shellCommand).append("\r\n");
                     pid = Runtime.getRuntime().exec(cmd);
                     if (pid != null) {
                         bufferedReader = new BufferedReader(new InputStreamReader(pid.getInputStream()), 1024);
@@ -124,6 +132,7 @@ public class JavaShellUtil {
                     stringBuffer.append("执行命令发生异常：\r\n").append(ioe.getMessage()).append("\r\n");
                 }
             }
+        client.sendEvent("branchEvent",stringBuffer.toString());
 
         return stringBuffer.toString();
     }

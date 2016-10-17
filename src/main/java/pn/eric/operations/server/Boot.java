@@ -87,7 +87,7 @@ public class Boot {
             System.out.println("webEvent: " + command);
 
             switch (command) {
-                case "listBuildServerBranches":
+                case "branches":
                     System.out.println("handleEvent->listBuildServerBranches");
                     JavaShellUtil.executeShellAndSendMessage(OperateCommand.BRANCH, client);
                     break;
