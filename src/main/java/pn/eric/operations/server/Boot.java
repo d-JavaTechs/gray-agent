@@ -7,7 +7,10 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import pn.eric.operations.po.ServerObject;
 import pn.eric.operations.po.WebObject;
+
+import java.util.ArrayList;
 
 /**
  * @author Eric
@@ -24,7 +27,12 @@ public class Boot {
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient socketIOClient) {
                 socketIOClient.joinRoom("operas");
-                System.out.println(String.format("join room operas %s", socketIOClient.getSessionId()));
+//                System.out.println(String.format("join room operas %s", socketIOClient.getSessionId()));
+                ArrayList ar = new ArrayList();
+                ar.add(new ServerObject("node1","192.168.0.1"));
+                ar.add(new ServerObject("node2","192.168.0.2"));
+                ar.add(new ServerObject("node3","192.168.0.3"));
+                socketIOClient.sendEvent("serverList",ar);
             }
         });
 
