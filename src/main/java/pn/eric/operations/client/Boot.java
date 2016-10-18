@@ -27,6 +27,10 @@ public class Boot {
                 System.out.println("disconnected");
             }
         });
+
+
+        new Thread(new Tailer(socket)).start();
+
         socket.connect();
     }
 }

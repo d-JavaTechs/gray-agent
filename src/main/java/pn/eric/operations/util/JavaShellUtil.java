@@ -25,13 +25,7 @@ public class JavaShellUtil {
             // 执行Shell命令
             pid = Runtime.getRuntime().exec(cmd);
             if (pid != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(pid.getInputStream()), 1024);
-                // 读取Shell的输出内容，并添加到stringBuffer中
-                while (bufferedReader != null
-                        && (line = bufferedReader.readLine()) != null) {
-                    stringBuffer.append(line).append("\r\n");
-                }
-//              pid.waitFor();
+              pid.waitFor();
             } else {
                 stringBuffer.append("没有pid\r\n");
             }
@@ -145,7 +139,7 @@ public class JavaShellUtil {
 
 
      public static void main(String[] args) {
-           System.out.println(executeShell(args[0]));
+           System.out.println(executeShell(" echo 'dwp'>>.record "));
     }
 }
 
