@@ -7,6 +7,9 @@ import pn.eric.operations.common.CmdExecutor;
 import pn.eric.operations.listener.DeployServerOperations;
 import pn.eric.operations.common.Tailer;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * @author duwupeng
  * @date
@@ -15,9 +18,13 @@ public class Boot {
     public static void main(String[] args) throws Exception{
         IO.Options opts = new IO.Options();
         opts.forceNew = true;
+
         final Socket socket = IO.socket("http://localhost:9095",opts);
 
-        CmdExecutor ex = new CmdExecutor();
+        final BlockingQueue queue = new LinkedBlockingQueue();
+
+        CmdExecutor ex = new CmdExecutor(queue);
+
         new Thread(ex).start();
 
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
@@ -26,7 +33,7 @@ public class Boot {
                 socket.emit("nodeReg", "master:192.168.0.1");
             }
 
-        }).on("webCmd", new DeployServerOperations(ex,socket)).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+        }).on("webCmd", new DeployServerOperations(queue,socket)).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             public void call(Object... args) {
                 System.out.println("disconnected");
             }

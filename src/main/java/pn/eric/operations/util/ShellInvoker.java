@@ -1,18 +1,11 @@
 package pn.eric.operations.util;
 
-import com.corundumstudio.socketio.SocketIOClient;
-import io.socket.client.Socket;
-import pn.eric.operations.event.OperateCommand;
-
-import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * @author Eric on 2016-08-10
+ * @author duwupeng on 2016-08-10
  */
 public class ShellInvoker {
     final BlockingQueue queue = new LinkedBlockingQueue();
@@ -39,7 +32,9 @@ public class ShellInvoker {
         }
 
     }
-
+        public static void main(String[] args) {
+            executeShell(String.format(args[0]));
+        }
 
 //
 //    public static String executeShellAndSendMessage(OperateCommand operateCommand,Socket socket) {
@@ -142,8 +137,6 @@ public class ShellInvoker {
 //
 //        return stringBuffer.toString();
 //    }
-     public static void main(String[] args) {
-        executeShell(String.format(args[0]));
-    }
+
 }
 

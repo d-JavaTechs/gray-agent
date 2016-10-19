@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Eric
+ * @author duwupeng
  */
 public class Boot {
     final static int port = 9095;
@@ -97,6 +97,7 @@ public class Boot {
                 case "branches":
                     System.out.println("handleEvent->listBuildServerBranches");
 //                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BRANCH, client);
+
                     break;
                 case "build":
                     System.out.println("handleEvent->build");

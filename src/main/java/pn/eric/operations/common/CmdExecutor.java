@@ -2,16 +2,17 @@ package pn.eric.operations.common;
 
 import pn.eric.operations.util.ShellInvoker;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created by eric on 16/10/18.
+ * Created by duwupeng on 16/10/18.
  */
 public class CmdExecutor implements Runnable{
-    final BlockingQueue queue = new LinkedBlockingQueue();
-    public BlockingQueue getQueue() {
-        return queue;
+    public BlockingQueue queue;
+
+    public CmdExecutor(BlockingQueue queue) {
+        this.queue = queue;
     }
+
     @Override
     public void run() {
             while(true) {

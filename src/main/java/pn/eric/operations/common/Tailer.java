@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Created by eric on 16/10/18.
+ * Created by duwupeng on 16/10/18.
  */
 public class Tailer implements Runnable{
     private static Process process;

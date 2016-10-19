@@ -1,7 +1,7 @@
 package pn.eric.operations.po;
 
 /**
- * @author Shadow
+ * @author duwupeng
  * @date
  */
 public class WebObject {

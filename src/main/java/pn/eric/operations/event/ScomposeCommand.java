@@ -1,7 +1,7 @@
 package pn.eric.operations.event;
 
 /**
- * @author Shadow
+ * @author duwupeng
  * @date
  */
 public enum  ScomposeCommand {

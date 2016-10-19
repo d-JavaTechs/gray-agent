@@ -6,16 +6,18 @@ import org.json.JSONObject;
 import pn.eric.operations.common.CmdExecutor;
 import pn.eric.operations.event.OperateCommand;
 
+import java.util.concurrent.BlockingQueue;
+
 /**
- * @author Shadow
+ * @author duwupeng
  * @date
  */
 public class DeployServerOperations implements Emitter.Listener{
     Socket socket;
-    CmdExecutor exec;
-    public  DeployServerOperations(CmdExecutor exec , Socket socket){
+    BlockingQueue queue;
+    public  DeployServerOperations(BlockingQueue queue , Socket socket){
         this.socket = socket;
-        this.exec = exec;
+        this.queue = queue;
     }
 //    public static void main(String[] args) {
 //        System.out.println("form build server " + OperateCommand.ROLLBACK.name());
@@ -27,11 +29,11 @@ public class DeployServerOperations implements Emitter.Listener{
             String command = (String)msg.get("msg");
             if(command.equals(OperateCommand.ROLLBACK.name().toLowerCase())){
 //                JavaShellUtil.executeShellAndSendMessage(OperateCommand.BRANCH, socket);
-                exec.getQueue().put("");
+                queue.put("");
                 System.out.println("ROLLBACK");
             } else if(command.equals(OperateCommand.DEPLOY.name().toLowerCase())){
 //                JavaShellUtil.executeShellAndSendMessage(OperateCommand.BRANCH, socket);
-                exec.getQueue().put("");
+                queue.put("");
                 System.out.println("DEPLOY");
             }
             System.out.println("form build server " + (String)msg.get("msg"));
