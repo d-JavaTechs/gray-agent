@@ -16,7 +16,7 @@ public class Tailer implements Runnable{
     private static Process process;
     private static InputStream inputStream;
     private static BufferedReader reader;
-    SocketIOServer server;
+    Socket socket;
 
     static {
         try{
@@ -29,8 +29,8 @@ public class Tailer implements Runnable{
     }
     public Tailer(){
     }
-    public Tailer(SocketIOServer server){
-        this.server=server;
+    public Tailer(Socket socket){
+        this.socket=socket;
     }
     @Override
     public void run() {
@@ -38,9 +38,9 @@ public class Tailer implements Runnable{
         try {
             while((line = reader.readLine()) != null) {
                 // 将实时日志通过WebSocket发送给客户端，给每一行添加一个HTML换行
-//                socket.emit("res", line);
-                server.getRoomOperations("webReg").sendEvent("res",line);
                 System.out.println(line);
+                socket.emit("res", line);
+//                server.getRoomOperations("webReg").sendEvent("res",line);
             }
         } catch (IOException e) {
             e.printStackTrace();
