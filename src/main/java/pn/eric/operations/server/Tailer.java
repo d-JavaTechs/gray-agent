@@ -1,5 +1,6 @@
 package pn.eric.operations.server;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import io.socket.client.Socket;
 
 import java.io.BufferedReader;
@@ -14,7 +15,7 @@ public class Tailer implements Runnable{
     private static Process process;
     private static InputStream inputStream;
     private static BufferedReader reader;
-    Socket socket;
+    SocketIOServer server;
 
     static {
         try{
@@ -27,8 +28,8 @@ public class Tailer implements Runnable{
     }
     public Tailer(){
     }
-    public Tailer(Socket socket){
-        this.socket=socket;
+    public Tailer(SocketIOServer server){
+        this.server=server;
     }
     @Override
     public void run() {
@@ -38,6 +39,7 @@ public class Tailer implements Runnable{
                 // 将实时日志通过WebSocket发送给客户端，给每一行添加一个HTML换行
 //                socket.emit("res", line);
                 System.out.println(line);
+                server.getRoomOperations("webReg").sendEvent("res",line);
             }
         } catch (IOException e) {
             e.printStackTrace();
