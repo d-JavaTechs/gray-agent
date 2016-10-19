@@ -4,7 +4,6 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import pn.eric.operations.listener.DeployServerOperations;
-import pn.eric.operations.po.DeployServerObject;
 
 /**
  * @author duwupeng
@@ -16,18 +15,20 @@ public class Boot {
         opts.forceNew = true;
         final Socket socket = IO.socket("http://localhost:9095",opts);
 
+        CmdExecutor ex = new CmdExecutor();
+        new Thread(ex).start();
+
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             public void call(Object... args) {
                 System.out.println("connected");
                 socket.emit("nodeReg", "master:192.168.0.1");
             }
 
-        }).on("webCmd", new DeployServerOperations(socket)).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+        }).on("webCmd", new DeployServerOperations(ex,socket)).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             public void call(Object... args) {
                 System.out.println("disconnected");
             }
         });
-
 
         new Thread(new Tailer(socket)).start();
 

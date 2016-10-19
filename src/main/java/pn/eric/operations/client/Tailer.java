@@ -20,6 +20,7 @@ public class Tailer implements Runnable{
     static {
         try{
             process = Runtime.getRuntime().exec("tail -f .record");
+
             inputStream = process.getInputStream();
             reader = new BufferedReader(new InputStreamReader(inputStream));
         }catch (Exception e){
@@ -42,13 +43,18 @@ public class Tailer implements Runnable{
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                inputStream.close();
+                reader.close();
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
 
     public static void main(String[] args) {
-//        JavaShellUtil.executeShell("mkdir ~/agentLog");
-//        JavaShellUtil.executeShell("cd ~/agentLog;touch nohup.out");
         new Thread(new Tailer()).start();
     }
 }

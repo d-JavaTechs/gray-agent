@@ -7,10 +7,8 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
-import pn.eric.operations.event.OperateCommand;
 import pn.eric.operations.po.DeployServerObject;
 import pn.eric.operations.po.WebObject;
-import pn.eric.operations.util.JavaShellUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -98,11 +96,11 @@ public class Boot {
             switch (command) {
                 case "branches":
                     System.out.println("handleEvent->listBuildServerBranches");
-                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BRANCH, client);
+//                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BRANCH, client);
                     break;
                 case "build":
                     System.out.println("handleEvent->build");
-                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BUILD, client);
+//                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BUILD, client);
                     break;
                 case "rollBack":
                     System.out.println("handleEvent->rollBack");
