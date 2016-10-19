@@ -7,11 +7,14 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import pn.eric.operations.client.Tailer;
 import pn.eric.operations.po.DeployServerObject;
 import pn.eric.operations.po.WebObject;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author duwupeng
@@ -25,10 +28,15 @@ public class Boot {
         config.setHostname(hostName);
         config.setPort(port);
         Map<String,DeployServerObject> nodesMap = new ConcurrentHashMap<String,DeployServerObject> ();
+
+        final BlockingQueue queue = new LinkedBlockingQueue();
+
         final SocketIOServer server = new SocketIOServer(config);
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient socketIOClient) {
                 System.out.println(String.format("join room %s", socketIOClient.getSessionId()));
+                new Thread(new Tailer(server)).start();
+                System.out.println("Tailer Thread started");
             }
         });
 
@@ -95,13 +103,25 @@ public class Boot {
 
             switch (command) {
                 case "branches":
-                    System.out.println("handleEvent->listBuildServerBranches");
-//                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BRANCH, client);
 
+                    System.out.println("handleEvent->listBuildServerBranches");
+                    try {
+                        queue.put("./git.sh 'branch'");
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
                     break;
+
                 case "build":
                     System.out.println("handleEvent->build");
 //                    JavaShellUtil.executeShellAndSendMessage(OperateCommand.BUILD, client);
+                    try {
+                        queue.put("./scompose.sh");
+
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+
                     break;
                 case "rollBack":
                     System.out.println("handleEvent->rollBack");

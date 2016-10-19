@@ -5,7 +5,6 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import pn.eric.operations.common.CmdExecutor;
 import pn.eric.operations.listener.DeployServerOperations;
-import pn.eric.operations.common.Tailer;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,6 +25,7 @@ public class Boot {
         CmdExecutor ex = new CmdExecutor(queue);
 
         new Thread(ex).start();
+        System.out.println("Cmd Thread started");
 
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             public void call(Object... args) {
@@ -40,6 +40,7 @@ public class Boot {
         });
 
         new Thread(new Tailer(socket)).start();
+        System.out.println("Tailer Thread started");
 
         socket.connect();
     }
