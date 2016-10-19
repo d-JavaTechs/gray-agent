@@ -47,7 +47,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <class.export>pn.eric.operations.util.ShellInvoker</class.export>
+        <class.export>pn.eric.operations.client.Boot</class.export>
       </properties>
     </profile>
   </profiles>

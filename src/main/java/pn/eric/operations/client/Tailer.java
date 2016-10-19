@@ -17,16 +17,6 @@ public class Tailer implements Runnable{
     private static InputStream inputStream;
     private static BufferedReader reader;
     Socket socket;
-
-    static {
-        try{
-            process = Runtime.getRuntime().exec("tail -f agent.log");
-            inputStream = process.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
     public Tailer(){
     }
     public Tailer(Socket socket){
@@ -34,13 +24,34 @@ public class Tailer implements Runnable{
     }
     @Override
     public void run() {
+
         String line;
         try {
+            process = Runtime.getRuntime().exec("tail -f /home/isuwang/gray/gray-agent/agent.log");
+            inputStream = process.getInputStream();
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
             while((line = reader.readLine()) != null) {
                 // 将实时日志通过WebSocket发送给客户端，给每一行添加一个HTML换行
                 System.out.println(line);
                 socket.emit("res", line);
-//                server.getRoomOperations("webReg").sendEvent("res",line);
+                while((line = reader.readLine()) != null) {
+                    // 将实时日志通过WebSocket发送给客户端，给每一行添加一个HTML换行
+                    // socket.emit("res", line);
+//                    if(line.equals("cmd: ./scompose.sh")){
+//                        currentEvent = "branch";
+//                    }else if(line.equals("cmd: ")) {
+//                        currentEvent = "build";
+//                    }
+//                    System.out.println("current cmd: " + currentEvent);
+//
+//                    if(currentEvent.equals("branch")){
+//                        server.getRoomOperations("web").sendEvent("branchEvent", line);
+//                    }else if(currentEvent.equals("build")){
+//                        server.getRoomOperations("web").sendEvent("buildEvent", line);
+//                    }
+
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

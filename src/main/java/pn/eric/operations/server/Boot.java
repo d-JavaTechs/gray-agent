@@ -7,7 +7,7 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
-import pn.eric.operations.client.Tailer;
+import pn.eric.operations.common.CmdExecutor;
 import pn.eric.operations.po.DeployServerObject;
 import pn.eric.operations.po.WebObject;
 
@@ -21,22 +21,34 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class Boot {
     final static int port = 9095;
-    final static String hostName = "localhost";
+//  final static String hostName = "121.199.12.247";
     public static void main(String[] args) throws InterruptedException {
 
         Configuration config = new Configuration();
-        config.setHostname(hostName);
+//        config.setHostname(hostName);
         config.setPort(port);
+
+        config.setAllowCustomRequests(true);
+
         Map<String,DeployServerObject> nodesMap = new ConcurrentHashMap<String,DeployServerObject> ();
+
+
 
         final BlockingQueue queue = new LinkedBlockingQueue();
 
         final SocketIOServer server = new SocketIOServer(config);
+
+        new Thread(new Tailer(server)).start();
+        System.out.println("Tailer Thread started");
+
+        CmdExecutor ex = new CmdExecutor(queue);
+        System.out.println("Cmd Thread started");
+
+        new Thread(ex).start();
+
         server.addConnectListener(new ConnectListener() {
             public void onConnect(SocketIOClient socketIOClient) {
-                System.out.println(String.format("join room %s", socketIOClient.getSessionId()));
-                new Thread(new Tailer(server)).start();
-                System.out.println("Tailer Thread started");
+                System.out.println(String.format(socketIOClient.getRemoteAddress()+ " --> join room %s", socketIOClient.getSessionId()));
             }
         });
 
@@ -103,13 +115,16 @@ public class Boot {
 
             switch (command) {
                 case "branches":
-
                     System.out.println("handleEvent->listBuildServerBranches");
-                    try {
-                        queue.put("./git.sh 'branch'");
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
+//                    try {
+//                        queue.put("./git.sh 'branch'");
+//                        queue.put("./git.sh 'branch'");
+                        for (int i =0;i<5; i++){
+                            server.getRoomOperations("web").sendEvent("branchEvent", "branch"+i );
+                        }
+//                    } catch (InterruptedException ex) {
+//                        ex.printStackTrace();
+//                    }
                     break;
 
                 case "build":
