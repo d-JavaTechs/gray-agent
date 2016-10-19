@@ -41,12 +41,13 @@
       </properties>
     </profile>
     <profile>
+
       <id>client</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <class.export>pn.eric.operations.client.Boot</class.export>
+        <class.export>pn.eric.operations.util.ShellInvoker</class.export>
       </properties>
     </profile>
   </profiles>
