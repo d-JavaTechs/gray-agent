@@ -1,6 +1,6 @@
-package pn.eric.operations.client;
+package pn.eric.operations.common;
 
-import pn.eric.operations.util.JavaShellUtil;
+import pn.eric.operations.util.ShellInvoker;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,7 +18,7 @@ public class CmdExecutor implements Runnable{
                 try {
                     System.out.println("Consumed: "+ queue.take());
                     String cmd  = (String)queue.take();
-                    JavaShellUtil.executeShell(cmd);
+                    ShellInvoker.executeShell(cmd);
                 } catch (InterruptedException ex) {
                    ex.printStackTrace();
                 }

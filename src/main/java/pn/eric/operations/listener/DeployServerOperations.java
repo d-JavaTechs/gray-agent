@@ -3,7 +3,7 @@ package pn.eric.operations.listener;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import org.json.JSONObject;
-import pn.eric.operations.client.CmdExecutor;
+import pn.eric.operations.common.CmdExecutor;
 import pn.eric.operations.event.OperateCommand;
 
 /**

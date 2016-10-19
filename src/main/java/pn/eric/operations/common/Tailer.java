@@ -1,7 +1,6 @@
-package pn.eric.operations.client;
+package pn.eric.operations.common;
 
 import io.socket.client.Socket;
-import pn.eric.operations.util.JavaShellUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;

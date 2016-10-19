@@ -14,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * @author Eric on 2016-08-10
  */
-public class JavaShellUtil {
+public class ShellInvoker {
     final BlockingQueue queue = new LinkedBlockingQueue();
 
     public BlockingQueue getQueue() {
