@@ -37,17 +37,17 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <class.export>pn.eric.operations.server.Boot</class.export>
+        <class.export>com.isuwang.operations.server.BuildServerShellInvoker</class.export>
       </properties>
     </profile>
     <profile>
 
       <id>client</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <class.export>pn.eric.operations.client.Boot</class.export>
+        <class.export>com.isuwang.operations.client.Main</class.export>
       </properties>
     </profile>
   </profiles>
